@@ -20,19 +20,29 @@ server.listen(port, host, () => {
 });
 
 
+const write = (file, text) => { 
+    const fileString = JSON.stringify(text);
+    fs.writeFileSync(file, fileString);
+}
+const read = (file) => {
+    const fileData = fs.readFileSync(file, "utf-8");
+    return JSON.parse(fileData);
+}
+
+
 const fetchData = () => {
+    const frasi = read(filePath);
+
     fetch(apiUrl)
     .then(response => response.json())
         .then(data => {
-            fs.appendFile(filePath,
-            data.value,
-            function (err) {
-            if (err) throw err;
-            console.log("Saved!");
-            });
+            write(filePath, [...frasi, data.value]);       
         })
 }
 fetchData();
+
+
+
 
 
 
