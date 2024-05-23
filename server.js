@@ -23,8 +23,8 @@ const fetchData = () => {
 
     fetch(apiUrl)
     .then(response => response.json())
-        .then(res => {
-            write(filePath, [...data, res.value]);       
+        .then(result => {
+            write(filePath, [...data, result.value]);       
         })
     return data[data.length - 1 ]
 }
