@@ -9,17 +9,6 @@ const fs = require('fs');
 
 const filePath = path.join(__dirname, 'norrisDb.json');
 
-
-const server = http.createServer((req, res) => {
-    res.writeHead(200, {"Content-Type" : "text/html"});
-    res.end('ciao');
-});
-
-server.listen(port, host, () => {
-    console.log('Server Online');
-});
-
-
 const write = (file, text) => { 
     const fileString = JSON.stringify(text);
     fs.writeFileSync(file, fileString);
@@ -29,24 +18,29 @@ const read = (file) => {
     return JSON.parse(fileData);
 }
 
-
 const fetchData = () => {
-    const frasi = read(filePath);
+    const data = read(filePath);
 
     fetch(apiUrl)
     .then(response => response.json())
-        .then(data => {
-            write(filePath, [...frasi, data.value]);       
+        .then(res => {
+            write(filePath, [...data, res.value]);       
         })
+    return data[data.length - 1 ]
 }
-fetchData();
 
+const server = http.createServer((req, res) => {
+    if (req.url === '/favicon.ico') {
+        res.writeHead(404);
+        res.end();
+        return
+    }
+    res.writeHead(200, {"Content-Type" : "text/html"});
+    res.end(`<h1>${fetchData()}</h1>`);
+});
 
-
-
-
-
-
-
+server.listen(port, host, () => {
+    console.log('Server Online');
+});
 
 
